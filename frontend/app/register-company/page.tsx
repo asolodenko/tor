@@ -66,15 +66,14 @@ export default function RegisterCompany() {
       createdAt: new Date().toISOString(),
     };
 
-    // Save to local storage
-    saveCompany(company);
+      // Save to local storage and redirect after 2 seconds
+      setTimeout(() => {
+        saveCompany(company);
 
-    setLoading(false);
-    setSuccess(true);
-
-    // Redirect after 2 seconds
-    setTimeout(() => {
-      router.push('/companies');
+        setLoading(false);
+        setSuccess(true);
+        
+        router.push('/companies');
     }, 2000);
   };
 

@@ -66,14 +66,13 @@ export default function RegisterProject() {
       createdAt: new Date().toISOString(),
     };
 
-    // Save to local storage
-    saveProject(project);
-
-    setLoading(false);
-    setSuccess(true);
-
-    // Redirect after 2 seconds
+    // Save to local storage and redirect after 2 seconds
     setTimeout(() => {
+      saveProject(project);
+
+      setLoading(false);
+      setSuccess(true);
+      
       router.push('/projects');
     }, 2000);
   };
