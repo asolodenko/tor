@@ -3,7 +3,7 @@ name: Deploy itera-rebuild-ukraine to Firebase Hosting
 
 on:
   push:
-    branches: [ feature/implement-deploy-to-firebase ]
+    branches: [ main ]
   workflow_dispatch:
 
 permissions:

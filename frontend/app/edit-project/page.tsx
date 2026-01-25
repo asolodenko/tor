@@ -3,18 +3,18 @@
  */
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useLanguage } from '@/lib/LanguageContext';
 import { Container, Section, Card, Alert } from '@/components/ui';
 import { getProjects, saveProject, Project } from '@/lib/storage';
 import { ProjectForm, ProjectFormData } from '@/components/ProjectForm';
 
-export default function EditProject() {
+function EditProjectContent() {
   const { t } = useLanguage();
   const router = useRouter();
-  const params = useParams();
-  const projectId = params.projectId as string;
+  const params = useSearchParams();
+  const projectId = params.get('projectId') || '';
 
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -127,5 +127,27 @@ export default function EditProject() {
         )}
       </Container>
     </Section>
+  );
+}
+
+export default function EditProject() {
+  const { t } = useLanguage();
+  
+  return (
+    <Suspense
+      fallback={
+        <Section>
+          <Container>
+            <div className="max-w-3xl mx-auto">
+              <Card className="p-8 text-center">
+                <p className="text-gray-600">{t('common.loading')}</p>
+              </Card>
+            </div>
+          </Container>
+        </Section>
+      }
+    >
+      <EditProjectContent />
+    </Suspense>
   );
 }

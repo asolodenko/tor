@@ -3,18 +3,18 @@
  */
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useLanguage } from '@/lib/LanguageContext';
 import { Container, Section, Card, Alert } from '@/components/ui';
 import { getCompanies, saveCompany, Company } from '@/lib/storage';
 import { CompanyForm, CompanyFormData } from '@/components/CompanyForm';
 
-export default function EditCompany() {
+function EditCompanyContent() {
   const { t } = useLanguage();
   const router = useRouter();
-  const params = useParams();
-  const companyId = params.companyId as string;
+  const params = useSearchParams();
+  const companyId = params.get('companyId') || '';
 
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -126,5 +126,27 @@ export default function EditCompany() {
         )}
       </Container>
     </Section>
+  );
+}
+
+export default function EditCompany() {
+  const { t } = useLanguage();
+  
+  return (
+    <Suspense
+      fallback={
+        <Section>
+          <Container>
+            <div className="max-w-3xl mx-auto">
+              <Card className="p-8 text-center">
+                <p className="text-gray-600">{t('common.loading')}</p>
+              </Card>
+            </div>
+          </Container>
+        </Section>
+      }
+    >
+      <EditCompanyContent />
+    </Suspense>
   );
 }

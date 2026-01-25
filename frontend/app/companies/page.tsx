@@ -79,7 +79,7 @@ export default function CompaniesPage() {
           <div className="grid md:grid-cols-2 gap-6">
             {filteredCompanies.map(company => (
               <Card key={company.id} className="p-6 relative" hover>
-                <Link href={`/edit-company/${company.id}`} className="absolute top-4 right-4 p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer" title="Edit company">
+                <Link href={`/edit-company?companyId=${company.id}`} className="absolute top-4 right-4 p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer" title="Edit company">
                   ✏️
                 </Link>
                 <div className="flex justify-between items-start mb-4">
