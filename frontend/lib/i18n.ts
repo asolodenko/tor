@@ -59,8 +59,14 @@ export const translations = {
     },
     // Company Registration
     companyReg: {
-      title: 'Register Your Company',
-      subtitle: 'Join the reconstruction effort by sharing your expertise',
+      title: {
+        register: 'Register Your Company',
+        edit: 'Edit Company',
+      },
+      subtitle: {
+        register: 'Join the reconstruction effort by sharing your expertise',
+        edit: 'Update company information',
+      },
       form: {
         companyName: 'Company Name',
         country: 'Country',
@@ -72,15 +78,24 @@ export const translations = {
         contactPerson: 'Contact Person',
         phone: 'Phone Number',
         submit: 'Submit Registration',
+        submitEdit: 'Update Company',
         cancel: 'Cancel',
         success: 'Company registered successfully!',
+        successEdit: 'Company updated successfully!',
         error: 'Please fill in all required fields',
+        notFound: 'Company not found',
       },
     },
     // Project Registration
     projectReg: {
-      title: 'Register Infrastructure Project',
-      subtitle: 'Submit your municipality\'s infrastructure needs',
+      title: {
+        register: 'Register Infrastructure Project',
+        edit: 'Edit Infrastructure Project',
+      },
+      subtitle: {
+        register: 'Submit your municipality\'s infrastructure needs',
+        edit: 'Update project information',
+      },
       form: {
         municipality: 'Municipality',
         region: 'Region',
@@ -92,9 +107,12 @@ export const translations = {
         priority: 'Priority Level',
         deadline: 'Target Deadline',
         submit: 'Submit Project',
+        submitEdit: 'Update Project',
         cancel: 'Cancel',
         success: 'Project registered successfully!',
+        successEdit: 'Project updated successfully!',
         error: 'Please fill in all required fields',
+        notFound: 'Project not found',
         priorities: {
           high: 'High',
           medium: 'Medium',
@@ -213,8 +231,14 @@ export const translations = {
     },
     // Company Registration
     companyReg: {
-      title: 'Реєстрація компанії',
-      subtitle: 'Долучайтесь до відбудови, поділившись своєю експертизою',
+      title: {
+        register: 'Реєстрація компанії',
+        edit: 'Редагування компанії',
+      },
+      subtitle: {
+        register: 'Долучайтесь до відбудови, поділившись своєю експертизою',
+        edit: 'Оновіть інформацію про компанію',
+      },
       form: {
         companyName: 'Назва компанії',
         country: 'Країна',
@@ -226,15 +250,24 @@ export const translations = {
         contactPerson: 'Контактна особа',
         phone: 'Номер телефону',
         submit: 'Подати реєстрацію',
+        submitEdit: 'Оновити компанію',
         cancel: 'Скасувати',
         success: 'Компанію успішно зареєстровано!',
+        successEdit: 'Компанію успішно оновлено!',
         error: 'Будь ласка, заповніть всі обов\'язкові поля',
+        notFound: 'Компанію не знайдено',
       },
     },
     // Project Registration
     projectReg: {
-      title: 'Реєстрація інфраструктурного проєкту',
-      subtitle: 'Подайте інфраструктурні потреби вашого муніципалітету',
+      title: {
+        register: 'Реєстрація інфраструктурного проєкту',
+        edit: 'Редагування інфраструктурного проєкту',
+      },
+      subtitle: {
+        register: 'Подайте інфраструктурні потреби вашого муніципалітету',
+        edit: 'Оновіть інформацію про проєкт',
+      },
       form: {
         municipality: 'Муніципалітет',
         region: 'Регіон',
@@ -246,9 +279,12 @@ export const translations = {
         priority: 'Рівень пріоритету',
         deadline: 'Цільовий термін',
         submit: 'Подати проєкт',
+        submitEdit: 'Оновити проєкт',
         cancel: 'Скасувати',
         success: 'Проєкт успішно зареєстровано!',
+        successEdit: 'Проєкт успішно оновлено!',
         error: 'Будь ласка, заповніть всі обов\'язкові поля',
+        notFound: 'Проєкт не знайдено',
         priorities: {
           high: 'Високий',
           medium: 'Середній',
