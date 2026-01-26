@@ -21,11 +21,68 @@ export const translations = {
     // Landing Page
     landing: {
       hero: {
+        badge: '',
         title: 'Rebuilding Ukraine Together',
         subtitle: 'Digital Platform for Infrastructure Reconstruction',
-        description: 'Connecting municipalities, companies, and donors for efficient infrastructure development across Ukraine',
+        description: 'Advancing national reconstruction through technical precision, Swiss institutional standards, and intelligent AI-driven resource allocation.',
         ctaPrimary: 'Register Your Company',
         ctaSecondary: 'Submit a Project',
+      },
+      stats: {
+        totalFunded: {
+          label: 'Total Funded',
+          value: '$1.2M',
+          change: '+12,4%',
+        },
+        activeProjects: {
+          label: 'Active Projects',
+          value: '358',
+          change: '+8,1%',
+        },
+        strategicPartners: {
+          label: 'Strategic Partners',
+          value: '112',
+          change: '+3,5%',
+        },
+      },
+      structural: {
+        badge: 'Structural Process',
+        title: 'Bridging the gap between local needs and global expertise.',
+        description: 'Our platform provides a transparent, data-driven framework for Ukraine\'s reconstruction. We ensure every dollar and resource is deployed where it has the maximum impact.',
+        municipalities: {
+          title: 'For Municipalities',
+          description: 'Submit your reconstruction projects to our pipeline. We help you verify community needs, conduct feasibility audits, and connect you with certified international development partners.',
+          feature1: 'Direct project submission portal',
+          feature2: 'Community impact verification',
+          feature3: 'Technical assistance and support',
+          cta: 'Register Municipality',
+        },
+        donors: {
+          title: 'For Private Sector & Donors',
+          description: 'Gain access to a verified pipeline of high-priority infrastructure projects. Offer technical expertise, supply materials or direct funding to projects monitored in real-time.',
+          feature1: 'Real-time project pipeline access',
+          feature2: 'Transparent procurement bidding',
+          feature3: 'Impact tracking and reporting',
+          cta: 'Join as Partner',
+        },
+      },
+      ai: {
+        badge: 'Proprietary Technology',
+        title: 'Advanced AI Matching Engine',
+        description: 'Our smart connection engine uses neural mapping to pair specific infrastructure needs with the most qualified international partners based on regional expertise, past performance, and current resource availability.',
+        cta: 'Discover the technology',
+        stat1: {
+          value: '0.8s',
+          label: 'LATENCY',
+        },
+        stat2: {
+          value: '94%',
+          label: 'ACCURACY',
+        },
+        feature: {
+          title: 'End-to-End Encryption',
+          description: 'Secure governmental data standards.',
+        },
       },
       features: {
         title: 'How It Works',
@@ -193,11 +250,68 @@ export const translations = {
     // Landing Page
     landing: {
       hero: {
+        badge: '',
         title: 'Відбудовуємо Україну Разом',
         subtitle: 'Цифрова платформа для відновлення інфраструктури',
-        description: 'Об\'єднуємо муніципалітети, компанії та донорів для ефективного розвитку інфраструктури по всій Україні',
+        description: 'Просування національної відбудови через технічну точність, швейцарські інституційні стандарти та інтелектуальне розподілення ресурсів на основі ШІ.',
         ctaPrimary: 'Зареєструвати компанію',
         ctaSecondary: 'Подати проєкт',
+      },
+      stats: {
+        totalFunded: {
+          label: 'Загальна сума фінансування',
+          value: '$1.2M',
+          change: '+12,4%',
+        },
+        activeProjects: {
+          label: 'Активні проєкти',
+          value: '358',
+          change: '+8,1%',
+        },
+        strategicPartners: {
+          label: 'Стратегічні партнери',
+          value: '112',
+          change: '+3,5%',
+        },
+      },
+      structural: {
+        badge: 'Структурний процес',
+        title: 'Налагодження зв\'язку між місцевими потребами та глобальною експертизою.',
+        description: 'Наша платформа забезпечує прозору, орієнтовану на дані структуру для відбудови України. Ми гарантуємо, що кожен долар і ресурс використовується там, де він має максимальний вплив.',
+        municipalities: {
+          title: 'Для громад',
+          description: 'Подайте свої проєкти відбудови до нашого конвеєра. Ми допомагаємо вам перевірити потреби громади, провести аудит здійсненності та зв’язати вас із сертифікованими міжнародними партнерами з розвитку.',
+          feature1: 'Портал прямої подачі проєктів',
+          feature2: 'Перевірка впливу на громаду',
+          feature3: 'Технічна допомога та підтримка',
+          cta: 'Зареєструвати громаду',
+        },
+        donors: {
+          title: 'Для приватного сектору та донорів',
+          description: 'Отримайте доступ до перевіреного конвеєра пріоритетних інфраструктурних проєктів. Пропонуйте технічну експертизу, постачайте матеріали або безпосереднє фінансування проєктів, які контролюються в режимі реального часу.',
+          feature1: 'Доступ до конвеєра проєктів у режимі реального часу',
+          feature2: 'Прозорі тендерні закупівлі',
+          feature3: 'Відстеження впливу та звітність',
+          cta: 'Приєднатися як партнер',
+        },
+      },
+      ai: {
+        badge: 'Власна технологія',
+        title: 'Передовий ШІ-двигун підбору',
+        description: 'Наш розумний двигун з\'єднання використовує нейронне картографування для поєднання конкретних інфраструктурних потреб з найбільш кваліфікованими міжнародними партнерами на основі регіональної експертизи, минулої діяльності та поточної доступності ресурсів.',
+        cta: 'Дізнатись про технологію',
+        stat1: {
+          value: '0.8s',
+          label: 'ЗАТРИМКА',
+        },
+        stat2: {
+          value: '94%',
+          label: 'ТОЧНІСТЬ',
+        },
+        feature: {
+          title: 'Наскрізне шифрування',
+          description: 'Стандарти безпеки урядових даних.',
+        },
       },
       features: {
         title: 'Як це працює',

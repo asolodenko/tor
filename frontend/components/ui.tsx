@@ -22,9 +22,9 @@ export function Button({
   const baseStyles = 'font-semibold rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2';
   
   const variants = {
-    primary: 'bg-[#1d4ed8] hover:bg-[#1e40af] text-white shadow-sm hover:shadow focus:ring-[#2563eb]',
+    primary: 'bg-[#3b82f6] hover:bg-[#2563eb] text-white shadow-sm hover:shadow focus:ring-[#3b82f6]',
     secondary: 'bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#334155] shadow-sm hover:shadow focus:ring-[#94a3b8]',
-    outline: 'border-2 border-[#1d4ed8] text-[#1d4ed8] hover:bg-[#eff6ff] focus:ring-[#2563eb]',
+    outline: 'border-2 border-[#3b82f6] text-[#3b82f6] hover:bg-[#eff6ff] focus:ring-[#3b82f6]',
     danger: 'bg-[#dc2626] hover:bg-[#b91c1c] text-white shadow-sm hover:shadow focus:ring-[#ef4444]',
   };
   
@@ -63,7 +63,7 @@ export function Input({ label, error, className = '', ...props }: InputProps) {
         </label>
       )}
       <input
-        className={`w-full px-3 py-2.5 border rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#2563eb] focus:border-transparent transition-all ${
+        className={`w-full px-3 py-2.5 border rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:border-transparent transition-all ${
           error ? 'border-[#dc2626] focus:ring-[#ef4444]' : 'border-[#cbd5e1] hover:border-[#94a3b8]'
         } ${className}`}
         {...props}
@@ -89,7 +89,7 @@ export function Textarea({ label, error, className = '', ...props }: TextareaPro
         </label>
       )}
       <textarea
-        className={`w-full px-3 py-2.5 border rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#2563eb] focus:border-transparent transition-all ${
+        className={`w-full px-3 py-2.5 border rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:border-transparent transition-all ${
           error ? 'border-[#dc2626] focus:ring-[#ef4444]' : 'border-[#cbd5e1] hover:border-[#94a3b8]'
         } ${className}`}
         {...props}
@@ -116,7 +116,7 @@ export function Select({ label, error, options, className = '', ...props }: Sele
         </label>
       )}
       <select
-        className={`w-full px-3 py-2.5 border rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#2563eb] focus:border-transparent transition-all ${
+        className={`w-full px-3 py-2.5 border rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:border-transparent transition-all ${
           error ? 'border-[#dc2626] focus:ring-[#ef4444]' : 'border-[#cbd5e1] hover:border-[#94a3b8]'
         } ${className}`}
         {...props}
@@ -202,7 +202,7 @@ interface SectionProps {
 
 export function Section({ children, className = '', id }: SectionProps) {
   return (
-    <section id={id} className={`py-12 md:py-16 lg:py-20 ${className}`}>
+    <section id={id} className={`py-12 md:py-16 ${className}`}>
       {children}
     </section>
   );
