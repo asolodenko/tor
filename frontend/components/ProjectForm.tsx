@@ -113,17 +113,21 @@ export function ProjectForm({
       )}
 
       <form onSubmit={handleSubmit} className="space-y-8">
-        {/* Section 1: Project Main Information */}
+        {/* Section: Project Information */}
         <Card className="p-8">
           <div className="mb-6">
-            <h2 className="text-2xl font-bold text-[#0f172a] mb-2">
-              1. Project Information
-            </h2>
-            <p className="text-sm text-[#64748b] flex items-start gap-2">
-              <svg className="w-4 h-4 text-[#3b82f6] mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              This information helps our AI engine understand your project better and improve matching accuracy
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-10 h-10 bg-[#3b82f6]/10 rounded-lg flex items-center justify-center">
+                <svg className="w-6 h-6 text-[#3b82f6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <h2 className="text-2xl font-bold text-[#0f172a]">
+                Project Information
+              </h2>
+            </div>
+            <p className="text-sm text-[#64748b]">
+              Basic details about your reconstruction project and location.
             </p>
           </div>
 
@@ -156,17 +160,21 @@ export function ProjectForm({
           </div>
         </Card>
 
-        {/* Section 2: Description */}
+        {/* Section: Project Description */}
         <Card className="p-8">
           <div className="mb-6">
-            <h2 className="text-2xl font-bold text-[#0f172a] mb-2">
-              2. Project Description
-            </h2>
-            <p className="text-sm text-[#64748b] flex items-start gap-2">
-              <svg className="w-4 h-4 text-[#3b82f6] mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              Provide detailed information about objectives, scope, and expected outcomes for better AI matching
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-10 h-10 bg-[#3b82f6]/10 rounded-lg flex items-center justify-center">
+                <svg className="w-6 h-6 text-[#3b82f6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h7" />
+                </svg>
+              </div>
+              <h2 className="text-2xl font-bold text-[#0f172a]">
+                Project Description
+              </h2>
+            </div>
+            <p className="text-sm text-[#64748b]">
+              Provide detailed information about objectives, scope, and expected outcomes.
             </p>
           </div>
 
@@ -193,21 +201,25 @@ export function ProjectForm({
           </div>
         </Card>
 
-        {/* Section 3: Infrastructure Category */}
+        {/* Section: Infrastructure Category */}
         <Card className="p-8">
           <div className="mb-6">
-            <h2 className="text-2xl font-bold text-[#0f172a] mb-2">
-              3. Infrastructure Category
-            </h2>
-            <p className="text-sm text-[#64748b] flex items-start gap-2">
-              <svg className="w-4 h-4 text-[#3b82f6] mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              Select the primary infrastructure category for your project
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-10 h-10 bg-[#3b82f6]/10 rounded-lg flex items-center justify-center">
+                <svg className="w-6 h-6 text-[#3b82f6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+              </div>
+              <h2 className="text-2xl font-bold text-[#0f172a]">
+                Infrastructure Category
+              </h2>
+            </div>
+            <p className="text-sm text-[#64748b]">
+              Select the primary infrastructure category for your project.
             </p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
             {SECTORS.map((sector) => (
               <button
                 key={sector.id}
@@ -228,16 +240,39 @@ export function ProjectForm({
               </button>
             ))}
           </div>
+
+          <div className="bg-[#f8fafc] border border-[#e2e8f0] rounded-xl p-4">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 bg-[#3b82f6]/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                <svg className="w-6 h-6 text-[#3b82f6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+              </div>
+              <div>
+                <p className="font-semibold text-[#0f172a] mb-1">AI Matching Optimization</p>
+                <p className="text-sm text-[#64748b]">
+                  Our AI uses the category and required technologies to match your project with qualified international companies. Be specific for better results.
+                </p>
+              </div>
+            </div>
+          </div>
         </Card>
 
-        {/* Section 4: Budget & Timeline */}
+        {/* Section: Budget & Timeline */}
         <Card className="p-8">
           <div className="mb-6">
-            <h2 className="text-2xl font-bold text-[#0f172a] mb-2">
-              4. Budget & Timeline
-            </h2>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-10 h-10 bg-[#3b82f6]/10 rounded-lg flex items-center justify-center">
+                <svg className="w-6 h-6 text-[#3b82f6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h2 className="text-2xl font-bold text-[#0f172a]">
+                Budget & Timeline
+              </h2>
+            </div>
             <p className="text-sm text-[#64748b]">
-              Provide budget and timeline information for planning purposes
+              Provide budget and timeline information for planning purposes.
             </p>
           </div>
 
