@@ -29,7 +29,7 @@ export function Navigation() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2 group">
-            <div className="w-10 h-10 bg-gradient-to-br from-[#1d4ed8] to-[#2563eb] rounded-lg flex items-center justify-center shadow-sm group-hover:shadow transition-all">
+            <div className="w-10 h-10 bg-gradient-to-br from-[#3b82f6] to-[#2563eb] rounded-lg flex items-center justify-center shadow-sm group-hover:shadow transition-all">
               <span className="text-white font-bold text-xl">🇺🇦</span>
             </div>
             <span className="text-xl font-bold text-[#0f172a] hidden sm:block">
@@ -45,7 +45,7 @@ export function Navigation() {
                 href={link.href}
                 className={`px-4 py-2 rounded-lg font-medium transition-all ${
                   isActive(link.href)
-                    ? 'bg-[#eff6ff] text-[#1d4ed8]'
+                    ? 'bg-[#eff6ff] text-[#3b82f6]'
                     : 'text-[#475569] hover:bg-[#f8fafc] hover:text-[#0f172a]'
                 }`}
               >
@@ -58,13 +58,13 @@ export function Navigation() {
           <div className="hidden md:flex items-center space-x-4">
             <Link
               href="/register-company"
-              className="px-4 py-2 bg-[#1d4ed8] text-white rounded-lg font-semibold hover:bg-[#1e40af] transition-all shadow-sm hover:shadow"
+              className="inline-flex items-center px-4 py-2 bg-[#3b82f6] text-white rounded-lg font-semibold hover:bg-[#2563eb] transition-all shadow-sm hover:shadow text-sm"
             >
               {t('nav.registerCompany')}
             </Link>
             <Link
               href="/register-project"
-              className="px-4 py-2 border-2 border-[#1d4ed8] text-[#1d4ed8] rounded-lg font-semibold hover:bg-[#eff6ff] transition-all"
+              className="inline-flex items-center px-4 py-2 border-2 border-[#3b82f6] text-[#3b82f6] rounded-lg font-semibold hover:bg-[#eff6ff] transition-all text-sm"
             >
               {t('nav.registerProject')}
             </Link>

@@ -57,7 +57,7 @@ export default function ProjectsPage() {
         </div>
 
         {/* Filters */}
-        <div className="flex flex-col md:flex-row gap-4 mb-8">
+        <div className="flex flex-col md:flex-row md:items-center gap-4 mb-8">
           <Input
             placeholder={t('common.search')}
             value={searchTerm}
@@ -67,7 +67,7 @@ export default function ProjectsPage() {
           <select
             value={filterSector}
             onChange={(e) => setFilterSector(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg"
+            className="px-4 py-2.5 border border-gray-300 rounded-lg text-sm"
           >
             <option value="all">{t('dashboard.filters.sector')}: All</option>
             {sectors.map(sector => (
@@ -77,15 +77,15 @@ export default function ProjectsPage() {
           <select
             value={filterPriority}
             onChange={(e) => setFilterPriority(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg"
+            className="px-4 py-2.5 border border-gray-300 rounded-lg text-sm"
           >
             <option value="all">Priority: All</option>
             <option value="high">High</option>
             <option value="medium">Medium</option>
             <option value="low">Low</option>
           </select>
-          <Link href="/register-project" className="ml-auto">
-            <Button>{t('nav.registerProject')}</Button>
+          <Link href="/register-project" className="md:ml-auto">
+            <Button className="w-full md:w-auto whitespace-nowrap">{t('nav.registerProject')}</Button>
           </Link>
         </div>
 

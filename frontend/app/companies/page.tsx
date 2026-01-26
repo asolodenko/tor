@@ -46,7 +46,7 @@ export default function CompaniesPage() {
         </div>
 
         {/* Filters */}
-        <div className="flex flex-col md:flex-row gap-4 mb-8">
+        <div className="flex flex-col md:flex-row md:items-center gap-4 mb-8">
           <Input
             placeholder={t('common.search')}
             value={searchTerm}
@@ -56,15 +56,15 @@ export default function CompaniesPage() {
           <select
             value={filterSector}
             onChange={(e) => setFilterSector(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg"
+            className="px-4 py-2.5 border border-gray-300 rounded-lg text-sm"
           >
             <option value="all">{t('dashboard.filters.sector')}: All</option>
             {sectors.map(sector => (
               <option key={sector} value={sector}>{sector}</option>
             ))}
           </select>
-          <Link href="/register-company" className="ml-auto">
-            <Button>{t('nav.registerCompany')}</Button>
+          <Link href="/register-company" className="md:ml-auto">
+            <Button className="w-full md:w-auto whitespace-nowrap">{t('nav.registerCompany')}</Button>
           </Link>
         </div>
 
