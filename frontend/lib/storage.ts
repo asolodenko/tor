@@ -261,7 +261,7 @@ export const initializeSampleData = (): void => {
         technologies: ['Water Treatment', 'Solar Power', 'Smart Grids'],
         description: 'Leading Swiss engineering firm specializing in sustainable infrastructure solutions',
         email: 'contact@swisseng.ch',
-        website: 'https://swisseng.ch',
+        website: 'https://www.swisseng.com/en/',
         contactPerson: 'Hans Mueller',
         phone: '+41 44 123 4567',
         createdAt: new Date().toISOString(),
