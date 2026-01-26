@@ -292,7 +292,7 @@ export function Alert({ type = 'info', children, onClose }: AlertProps) {
   };
 
   return (
-    <div className={`border rounded-lg p-4 ${types[type]} flex justify-between items-start`}>
+    <div className={`border rounded-lg p-4 ${types[type]} flex justify-between items-start mb-4`}>
       <div>{children}</div>
       {onClose && (
         <button onClick={onClose} className="ml-4 text-lg font-bold hover:opacity-70">

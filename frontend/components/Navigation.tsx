@@ -58,13 +58,13 @@ export function Navigation() {
           <div className="hidden md:flex items-center space-x-4">
             <Link
               href="/register-company"
-              className="px-4 py-2 bg-[#3b82f6] text-white rounded-lg font-semibold hover:bg-[#2563eb] transition-all shadow-sm hover:shadow"
+              className="inline-flex items-center px-4 py-2 bg-[#3b82f6] text-white rounded-lg font-semibold hover:bg-[#2563eb] transition-all shadow-sm hover:shadow text-sm"
             >
               {t('nav.registerCompany')}
             </Link>
             <Link
               href="/register-project"
-              className="px-4 py-2 border-2 border-[#3b82f6] text-[#3b82f6] rounded-lg font-semibold hover:bg-[#eff6ff] transition-all"
+              className="inline-flex items-center px-4 py-2 border-2 border-[#3b82f6] text-[#3b82f6] rounded-lg font-semibold hover:bg-[#eff6ff] transition-all text-sm"
             >
               {t('nav.registerProject')}
             </Link>
