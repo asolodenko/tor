@@ -4,8 +4,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/lib/LanguageContext';
-import { Container, Section, Card, Badge, Button, Alert, Input } from '@/components/ui';
+import { Container, Section, Card, Badge, Button, Alert } from '@/components/ui';
 import { 
   getMatches, getProjects, getCompanies, 
   saveMatch, generateMatches, 
@@ -14,14 +15,15 @@ import {
 
 export default function Dashboard() {
   const { t } = useLanguage();
-  const [activeTab, setActiveTab] = useState<'matches' | 'projects' | 'companies'>('matches');
+  const router = useRouter();
   const [matches, setMatches] = useState<Match[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [companies, setCompanies] = useState<Company[]>([]);
-  const [filterStatus, setFilterStatus] = useState<string>('all');
   const [filterSector, setFilterSector] = useState<string>('all');
+  const [filterMunicipality, setFilterMunicipality] = useState<string>('all');
+  const [filterTechnology, setFilterTechnology] = useState<string>('all');
   const [alert, setAlert] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
-  const [editingNotes, setEditingNotes] = useState<{ [key: string]: string }>({});
+  const [selectedMatches, setSelectedMatches] = useState<Set<string>>(new Set());
 
   const loadData = () => {
     setMatches(getMatches());
@@ -37,10 +39,11 @@ export default function Dashboard() {
     const newMatches = generateMatches();
     newMatches.forEach(match => saveMatch(match));
     loadData();
-    setAlert({ type: 'success', message: `Generated ${newMatches.length} new matches!` });
+    setAlert({ type: 'success', message: `${newMatches.length} ${t('dashboard.matchesGenerated')}` });
   };
 
-  const handleUpdateMatchStatus = (matchId: string, status: Match['status']) => {
+  const handleUpdateMatchStatus = (matchId: string, status: Match['status'], e?: React.MouseEvent) => {
+    e?.stopPropagation();
     const match = matches.find(m => m.id === matchId);
     if (match) {
       const updatedMatch = { 
@@ -51,19 +54,44 @@ export default function Dashboard() {
       };
       saveMatch(updatedMatch);
       loadData();
-      setAlert({ type: 'success', message: `Match ${status}!` });
+      setAlert({ type: 'success', message: t('dashboard.matchValidated') });
     }
   };
 
-  const handleSaveNotes = (matchId: string) => {
-    const match = matches.find(m => m.id === matchId);
-    if (match) {
-      const updatedMatch = { ...match, notes: editingNotes[matchId] || '' };
-      saveMatch(updatedMatch);
-      loadData();
-      setEditingNotes(prev => ({ ...prev, [matchId]: '' }));
-      setAlert({ type: 'success', message: 'Notes saved!' });
+  const handleBatchValidate = () => {
+    let count = 0;
+    selectedMatches.forEach(matchId => {
+      const match = matches.find(m => m.id === matchId);
+      if (match && match.status === 'pending') {
+        handleUpdateMatchStatus(matchId, 'validated');
+        count++;
+      }
+    });
+    setSelectedMatches(new Set());
+    setAlert({ type: 'success', message: `${count} ${t('dashboard.matchesValidated')}` });
+  };
+
+  const handleRowClick = (matchId: string) => {
+    router.push(`/potential-match?matchId=${matchId}`);
+  };
+
+  const handleDeleteMatch = (matchId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const updatedMatches = matches.filter(m => m.id !== matchId);
+    localStorage.setItem('matches', JSON.stringify(updatedMatches));
+    loadData();
+    setAlert({ type: 'success', message: t('dashboard.matchDeleted') });
+  };
+
+  const toggleMatchSelection = (matchId: string, e: React.ChangeEvent<HTMLInputElement>) => {
+    e.stopPropagation();
+    const newSelection = new Set(selectedMatches);
+    if (newSelection.has(matchId)) {
+      newSelection.delete(matchId);
+    } else {
+      newSelection.add(matchId);
     }
+    setSelectedMatches(newSelection);
   };
 
   const getProjectById = (id: string): Project | undefined => {
@@ -75,54 +103,59 @@ export default function Dashboard() {
   };
 
   const filteredMatches = matches.filter(match => {
-    if (filterStatus !== 'all' && match.status !== filterStatus) return false;
-    if (filterSector !== 'all') {
-      const project = getProjectById(match.projectId);
-      if (project?.sector !== filterSector) return false;
+    const project = getProjectById(match.projectId);
+    if (!project) return false;
+    
+    if (filterSector !== 'all' && project.sector !== filterSector) return false;
+    if (filterMunicipality !== 'all' && project.municipality !== filterMunicipality) return false;
+    if (filterTechnology !== 'all') {
+      const hasMatchedTech = match.matchedTechnologies.some(tech => 
+        tech.toLowerCase().includes(filterTechnology.toLowerCase())
+      );
+      if (!hasMatchedTech) return false;
     }
-    return true;
+    
+    return match.status === 'pending';
   }).sort((a, b) => b.relevanceScore - a.relevanceScore);
 
+  const totalMatches = matches.length;
+  const pendingMatches = matches.filter(m => m.status === 'pending').length;
+  const validatedMatches = matches.filter(m => m.status === 'validated' || m.status === 'published').length;
+  const validationRate = totalMatches > 0 ? ((validatedMatches / totalMatches) * 100).toFixed(1) : 0;
+
   const stats = {
-    totalProjects: projects.length,
-    totalCompanies: companies.length,
-    pendingMatches: matches.filter(m => m.status === 'pending').length,
-    validatedMatches: matches.filter(m => m.status === 'validated').length,
-  };
-
-  const getStatusBadge = (status: Match['status']) => {
-    const variants: { [key in Match['status']]: 'default' | 'warning' | 'success' | 'info' } = {
-      pending: 'warning',
-      validated: 'success',
-      rejected: 'default',
-      published: 'info',
-    };
-    return <Badge variant={variants[status]}>{status.toUpperCase()}</Badge>;
-  };
-
-  const getPriorityBadge = (priority: Project['priority']) => {
-    const variants = {
-      high: 'danger' as const,
-      medium: 'warning' as const,
-      low: 'default' as const,
-    };
-    return <Badge variant={variants[priority]}>{priority.toUpperCase()}</Badge>;
+    totalMatches,
+    pendingMatches,
+    validationRate,
   };
 
   const sectors = Array.from(new Set(projects.map(p => p.sector)));
+  const municipalities = Array.from(new Set(projects.map(p => p.municipality)));
+  const technologies = Array.from(new Set(
+    matches.flatMap(m => m.matchedTechnologies)
+  ));
+
+  const resetFilters = () => {
+    setFilterSector('all');
+    setFilterMunicipality('all');
+    setFilterTechnology('all');
+  };
+
+  const getSectorIcon = (sector: string) => {
+    const icons: { [key: string]: string } = {
+      'Water Infrastructure': '💧',
+      'Energy Systems': '⚡',
+      'Housing & Shelter': '🏠',
+      'Transportation': '🚗',
+      'Healthcare Facilities': '🏥',
+      'Educational Buildings': '🎓',
+    };
+    return icons[sector] || '🏗️';
+  };
 
   return (
     <Section>
       <Container>
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            {t('dashboard.title')}
-          </h1>
-          <p className="text-lg text-gray-600">
-            {t('dashboard.subtitle')}
-          </p>
-        </div>
-
         {alert && (
           <Alert type={alert.type} onClose={() => setAlert(null)}>
             {alert.message}
@@ -130,245 +163,286 @@ export default function Dashboard() {
         )}
 
         {/* Statistics */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Card className="p-6">
-            <div className="text-3xl font-bold text-blue-600 mb-2">{stats.totalProjects}</div>
-            <div className="text-sm text-gray-600">{t('dashboard.stats.totalProjects')}</div>
-          </Card>
-          <Card className="p-6">
-            <div className="text-3xl font-bold text-green-600 mb-2">{stats.totalCompanies}</div>
-            <div className="text-sm text-gray-600">{t('dashboard.stats.totalCompanies')}</div>
-          </Card>
-          <Card className="p-6">
-            <div className="text-3xl font-bold text-yellow-600 mb-2">{stats.pendingMatches}</div>
-            <div className="text-sm text-gray-600">{t('dashboard.stats.pendingMatches')}</div>
-          </Card>
-          <Card className="p-6">
-            <div className="text-3xl font-bold text-purple-600 mb-2">{stats.validatedMatches}</div>
-            <div className="text-sm text-gray-600">{t('dashboard.stats.validatedMatches')}</div>
-          </Card>
-        </div>
-
-        {/* Tabs */}
-        <div className="flex gap-2 mb-6 border-b border-gray-200">
-          {(['matches', 'projects', 'companies'] as const).map(tab => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`px-6 py-3 font-medium transition-colors ${
-                activeTab === tab
-                  ? 'text-blue-600 border-b-2 border-blue-600'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              {t(`dashboard.tabs.${tab}`)}
-            </button>
-          ))}
-        </div>
-
-        {/* Matches Tab */}
-        {activeTab === 'matches' && (
-          <div>
-            <div className="flex flex-col md:flex-row gap-4 mb-6">
-              <Button onClick={handleGenerateMatches}>
-                {t('dashboard.generate')}
-              </Button>
-              <select
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg"
-              >
-                <option value="all">{t('dashboard.filters.all')}</option>
-                <option value="pending">{t('dashboard.filters.pending')}</option>
-                <option value="validated">{t('dashboard.filters.validated')}</option>
-                <option value="rejected">{t('dashboard.filters.rejected')}</option>
-                <option value="published">{t('dashboard.filters.published')}</option>
-              </select>
-              <select
-                value={filterSector}
-                onChange={(e) => setFilterSector(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg"
-              >
-                <option value="all">{t('dashboard.filters.sector')}: All</option>
-                {sectors.map(sector => (
-                  <option key={sector} value={sector}>{sector}</option>
-                ))}
-              </select>
+            <div className="flex items-start justify-between mb-4">
+              <div>
+                <div className="text-sm text-gray-500 mb-2">{t('dashboard.stats.totalMatches')}</div>
+                <div className="flex items-baseline gap-2">
+                  <div className="text-4xl font-bold text-gray-900">{stats.totalMatches.toLocaleString()}</div>
+                  <div className="text-sm text-green-600 font-medium">+12%</div>
+                </div>
+              </div>
+              <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center text-xl">
+                ❄️
+              </div>
             </div>
+          </Card>
 
-            <div className="space-y-4">
-              {filteredMatches.length === 0 ? (
-                <Card className="p-12 text-center">
-                  <p className="text-gray-500 text-lg">{t('dashboard.noMatches')}</p>
-                </Card>
-              ) : (
-                filteredMatches.map(match => {
-                  const project = getProjectById(match.projectId);
-                  const company = getCompanyById(match.companyId);
-                  if (!project || !company) return null;
+          <Card className="p-6">
+            <div className="flex items-start justify-between mb-4">
+              <div>
+                <div className="text-sm text-gray-500 mb-2">{t('dashboard.stats.pendingMatches')}</div>
+                <div className="text-4xl font-bold text-gray-900">{stats.pendingMatches}</div>
+                <div className="text-sm text-gray-500 mt-1">{t('dashboard.stats.actionRequired')}</div>
+              </div>
+              <div className="w-10 h-10 rounded-lg bg-yellow-50 flex items-center justify-center text-xl">
+                📋
+              </div>
+            </div>
+          </Card>
 
-                  return (
-                    <Card key={match.id} className="p-6">
-                      <div className="grid md:grid-cols-12 gap-6">
-                        {/* Relevance Score */}
-                        <div className="md:col-span-2 flex flex-col items-center justify-center">
-                          <div className="text-4xl font-bold text-blue-600">
-                            {match.relevanceScore}%
+          <Card className="p-6">
+            <div className="flex items-start justify-between mb-4">
+              <div>
+                <div className="text-sm text-gray-500 mb-2">{t('dashboard.stats.validationRate')}</div>
+                <div className="flex items-baseline gap-2">
+                  <div className="text-4xl font-bold text-gray-900">{stats.validationRate}%</div>
+                  <div className="text-sm text-green-600 font-medium">+2.1%</div>
+                </div>
+              </div>
+              <div className="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center text-xl">
+                🛡️
+              </div>
+            </div>
+          </Card>
+        </div>
+
+        {/* Filters */}
+        <Card className="p-4 mb-6">
+          <div className="flex flex-col md:flex-row md:items-center gap-4">
+            <div className="flex items-center gap-2 text-gray-700">
+              <span className="text-lg">⚙️</span>
+              <span className="font-medium">{t('common.filter')}:</span>
+            </div>
+            
+            <select
+              value={filterSector}
+              onChange={(e) => setFilterSector(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg text-sm"
+            >
+              <option value="all">{t('dashboard.filters.sector')}: {t('dashboard.filters.all')}</option>
+              {sectors.map(sector => (
+                <option key={sector} value={sector}>{sector}</option>
+              ))}
+            </select>
+
+            <select
+              value={filterMunicipality}
+              onChange={(e) => setFilterMunicipality(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg text-sm"
+            >
+              <option value="all">{t('dashboard.filters.municipality')}: {t('dashboard.filters.all')}</option>
+              {municipalities.map(municipality => (
+                <option key={municipality} value={municipality}>{municipality}</option>
+              ))}
+            </select>
+
+            <select
+              value={filterTechnology}
+              onChange={(e) => setFilterTechnology(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg text-sm"
+            >
+              <option value="all">{t('dashboard.filters.technology')}: {t('dashboard.filters.all')}</option>
+              {technologies.map(tech => (
+                <option key={tech} value={tech}>{tech}</option>
+              ))}
+            </select>
+
+            <button
+              onClick={resetFilters}
+              className="px-4 py-2 text-sm text-blue-600 hover:text-blue-700 font-medium"
+            >
+              {t('dashboard.filters.resetAll')}
+            </button>
+
+            <Button 
+              onClick={handleGenerateMatches}
+              className="md:ml-auto whitespace-nowrap"
+            >
+              🤖 {t('dashboard.runAiScan')}
+            </Button>
+          </div>
+        </Card>
+
+        {/* Matchmaking Queue Table */}
+        <Card className="overflow-hidden">
+          <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-gray-900">{t('dashboard.table.matchmakingQueue')}</h2>
+            <Button 
+              onClick={handleBatchValidate}
+              disabled={selectedMatches.size === 0}
+              size="sm"
+            >
+              {t('dashboard.table.batchValidate')} ({selectedMatches.size})
+            </Button>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50 border-b border-gray-200">
+                <tr>
+                  <th className="w-12 px-4 py-3"></th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {t('dashboard.table.municipalProject')}
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {t('dashboard.table.matchedPartner')}
+                  </th>
+                  <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {t('dashboard.table.score')}
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {t('dashboard.table.sector')}
+                  </th>
+                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {t('dashboard.table.actions')}
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {filteredMatches.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-4 py-12 text-center text-gray-500">
+                      {t('dashboard.table.noPendingMatches')}
+                    </td>
+                  </tr>
+                ) : (
+                  filteredMatches.map(match => {
+                    const project = getProjectById(match.projectId);
+                    const company = getCompanyById(match.companyId);
+                    if (!project || !company) return null;
+
+                    return (
+                      <tr 
+                        key={match.id} 
+                        onClick={() => handleRowClick(match.id)}
+                        className="hover:bg-gray-50 cursor-pointer transition-colors"
+                      >
+                        <td className="px-4 py-4">
+                          <input
+                            type="checkbox"
+                            checked={selectedMatches.has(match.id)}
+                            onChange={(e) => toggleMatchSelection(match.id, e)}
+                            onClick={(e) => e.stopPropagation()}
+                            className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                          />
+                        </td>
+                        <td className="px-4 py-4">
+                          <div className="font-semibold text-gray-900">{project.title}</div>
+                          <div className="text-sm text-gray-500 flex items-center gap-1">
+                            <span>📍</span> {project.municipality}
                           </div>
-                          <div className="text-sm text-gray-600">{t('dashboard.match.score')}</div>
-                        </div>
-
-                        {/* Match Details */}
-                        <div className="md:col-span-7 space-y-3">
-                          <div>
-                            <div className="text-sm text-gray-600">{t('dashboard.match.project')}</div>
-                            <div className="font-semibold text-gray-900">{project.title}</div>
-                            <div className="text-sm text-gray-600">{project.municipality}, {project.region}</div>
-                          </div>
-
-                          <div>
-                            <div className="text-sm text-gray-600">{t('dashboard.match.company')}</div>
-                            <div className="font-semibold text-gray-900">{company.name}</div>
-                            <div className="text-sm text-gray-600">{company.country}</div>
-                          </div>
-
-                          <div>
-                            <div className="text-sm text-gray-600 mb-1">{t('dashboard.match.technologies')}</div>
-                            <div className="flex flex-wrap gap-2">
-                              {match.matchedTechnologies.map(tech => (
-                                <Badge key={tech} variant="info">{tech}</Badge>
-                              ))}
+                        </td>
+                        <td className="px-4 py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center text-lg">
+                              {getSectorIcon(project.sector)}
+                            </div>
+                            <div>
+                              <div className="font-semibold text-gray-900">{company.name}</div>
+                              <div className="text-sm text-gray-500">{company.country}</div>
                             </div>
                           </div>
-
-                          {/* AI-Generated Match Analysis */}
-                          {match.aiNote && (
-                            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                              <div className="text-xs font-medium text-blue-700 mb-1">🤖 AI Match Analysis</div>
-                              <div className="text-sm text-blue-900 leading-relaxed">
-                                {match.aiNote}
+                        </td>
+                        <td className="px-4 py-4">
+                          <div className="flex justify-center">
+                            <div className="relative w-14 h-14">
+                              <svg className="w-14 h-14 transform -rotate-90">
+                                <circle
+                                  cx="28"
+                                  cy="28"
+                                  r="24"
+                                  stroke="#e5e7eb"
+                                  strokeWidth="4"
+                                  fill="none"
+                                />
+                                <circle
+                                  cx="28"
+                                  cy="28"
+                                  r="24"
+                                  stroke="#3b82f6"
+                                  strokeWidth="4"
+                                  fill="none"
+                                  strokeDasharray={`${(match.relevanceScore / 100) * 150.8} 150.8`}
+                                  strokeLinecap="round"
+                                />
+                              </svg>
+                              <div className="absolute inset-0 flex items-center justify-center text-sm font-bold text-gray-900">
+                                {match.relevanceScore}%
                               </div>
                             </div>
-                          )}
-
-                          {/* Manual Notes */}
-                          <div>
-                            <label className="text-sm text-gray-600 mb-1 block">{t('dashboard.match.notes')}</label>
-                            <Input
-                              placeholder="Add your validation notes..."
-                              value={editingNotes[match.id] ?? match.notes ?? ''}
-                              onChange={(e) => setEditingNotes({ ...editingNotes, [match.id]: e.target.value })}
-                            />
-                            {editingNotes[match.id] !== undefined && (
-                              <Button size="sm" onClick={() => handleSaveNotes(match.id)} className="mt-2">
-                                {t('dashboard.match.saveNotes')}
-                              </Button>
-                            )}
                           </div>
-                        </div>
-
-                        {/* Actions */}
-                        <div className="md:col-span-3 flex flex-col gap-2">
-                          <div className="mb-2">{getStatusBadge(match.status)}</div>
-                          
-                          {match.status === 'pending' && (
-                            <>
-                              <Button 
-                                size="sm" 
-                                onClick={() => handleUpdateMatchStatus(match.id, 'validated')}
-                              >
-                                {t('dashboard.match.validate')}
-                              </Button>
-                              <Button 
-                                size="sm" 
-                                variant="danger"
-                                onClick={() => handleUpdateMatchStatus(match.id, 'rejected')}
-                              >
-                                {t('dashboard.match.reject')}
-                              </Button>
-                            </>
-                          )}
-                          
-                          {match.status === 'validated' && (
-                            <Button 
-                              size="sm" 
-                              onClick={() => handleUpdateMatchStatus(match.id, 'published')}
+                        </td>
+                        <td className="px-4 py-4">
+                          <Badge>{project.sector}</Badge>
+                        </td>
+                        <td className="px-4 py-4">
+                          <div className="flex items-center justify-end gap-2">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleRowClick(match.id);
+                              }}
+                              className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                              title={t('dashboard.table.viewDetails')}
                             >
-                              {t('dashboard.match.publish')}
+                              ⚙️
+                            </button>
+                            <button
+                              onClick={(e) => handleDeleteMatch(match.id, e)}
+                              className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                              title={t('dashboard.table.deleteMatch')}
+                            >
+                              🗑️
+                            </button>
+                            <Button
+                              size="sm"
+                              onClick={(e) => handleUpdateMatchStatus(match.id, 'validated', e)}
+                            >
+                              {t('dashboard.table.validate')}
                             </Button>
-                          )}
-                        </div>
-                      </div>
-                    </Card>
-                  );
-                })
-              )}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {filteredMatches.length > 0 && (
+            <div className="px-4 py-3 border-t border-gray-200 flex items-center justify-between text-sm text-gray-500">
+              <div>{t('dashboard.table.showing')} 1-{filteredMatches.length} {t('dashboard.table.of')} {stats.pendingMatches} {t('dashboard.table.pendingMatchesText')}</div>
+              <div className="flex gap-2">
+                <button className="p-2 hover:bg-gray-100 rounded-lg disabled:opacity-50" disabled>
+                  ←
+                </button>
+                <button className="p-2 hover:bg-gray-100 rounded-lg disabled:opacity-50" disabled>
+                  →
+                </button>
+              </div>
+            </div>
+          )}
+        </Card>
+
+        {/* AI Score Info */}
+        <Card className="mt-6 p-4 bg-blue-50 border border-blue-200">
+          <div className="flex gap-3">
+            <div className="flex-shrink-0">
+              <div className="w-6 h-6 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm font-bold">
+                i
+              </div>
+            </div>
+            <div>
+              <div className="font-semibold text-blue-900 mb-1">{t('dashboard.aiScore.title')}</div>
+              <div className="text-sm text-blue-800">
+                {t('dashboard.aiScore.description')}
+              </div>
             </div>
           </div>
-        )}
-
-        {/* Projects Tab */}
-        {activeTab === 'projects' && (
-          <div className="space-y-4">
-            {projects.map(project => (
-              <Card key={project.id} className="p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">{project.title}</h3>
-                    <p className="text-gray-600">{project.municipality}, {project.region}</p>
-                  </div>
-                  <div className="flex gap-2">
-                    {getPriorityBadge(project.priority)}
-                    <Badge>{project.sector}</Badge>
-                  </div>
-                </div>
-                <p className="text-gray-700 mb-4">{project.description}</p>
-                <div className="flex flex-wrap gap-2">
-                  {project.requiredTechnologies.map(tech => (
-                    <Badge key={tech} variant="info">{tech}</Badge>
-                  ))}
-                </div>
-                {project.budget && (
-                  <div className="mt-4 text-sm text-gray-600">
-                    Budget: ${project.budget.toLocaleString()}
-                  </div>
-                )}
-              </Card>
-            ))}
-          </div>
-        )}
-
-        {/* Companies Tab */}
-        {activeTab === 'companies' && (
-          <div className="space-y-4">
-            {companies.map(company => (
-              <Card key={company.id} className="p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">{company.name}</h3>
-                    <p className="text-gray-600">{company.country}</p>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {company.sector.map(s => (
-                      <Badge key={s}>{s}</Badge>
-                    ))}
-                  </div>
-                </div>
-                <p className="text-gray-700 mb-4">{company.description}</p>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {company.technologies.map(tech => (
-                    <Badge key={tech} variant="success">{tech}</Badge>
-                  ))}
-                </div>
-                <div className="text-sm text-gray-600">
-                  <p>Contact: {company.contactPerson}</p>
-                  <p>Email: {company.email}</p>
-                  <p>Phone: {company.phone}</p>
-                </div>
-              </Card>
-            ))}
-          </div>
-        )}
+        </Card>
       </Container>
     </Section>
   );
